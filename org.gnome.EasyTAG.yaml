@@ -17,10 +17,10 @@ cleanup:
   - /lib/pkgconfig
   - /lib/*.a
   - /lib/*.la
-rename-icon: easytag
+#rename-icon: easytag
 copy-icon: true
-rename-desktop-file: easytag.desktop
-rename-appdata-file: easytag.appdata.xml
+#rename-desktop-file: easytag.desktop
+#rename-appdata-file: easytag.appdata.xml
 
 modules:
   - name: id3lib
@@ -75,13 +75,16 @@ modules:
           - autoreconf --force --install
 
   - name: taglib
-    buildsystem: cmake
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_INSTALL_LIBDIR=/app/lib
+      - -DCMAKE_BUILD_TYPE=Release
     cleanup:
       - /bin
     sources:
       - type: archive
-        url: https://taglib.org/releases/taglib-1.13.1.tar.gz
-        sha512: 986231ee62caa975afead7e94630d58acaac25a38bc33d4493d51bd635d79336e81bba60586d7355ebc0670e31f28d32da3ecceaf33292e4bc240c64bf00f35b
+        url: https://taglib.org/releases/taglib-2.1.1.tar.gz
+        sha256: 3716d31f7c83cbf17b67c8cf44dd82b2a2f17e6780472287a16823e70305ddba
 
   - name: intltool
     cleanup:
@@ -91,18 +94,33 @@ modules:
         url: https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz
         sha256: 67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
 
+  - name: libsoup
+    buildsystem: meson
+    config-opts:
+      - --libdir=/app/lib
+      - -Dintrospection=disabled
+      - -Dvapi=disabled
+      - -Dtests=false
+      - -Dgnome=false
+      - -Dgssapi=disabled
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/libsoup/2.74/libsoup-2.74.3.tar.xz
+        sha256: e4b77c41cfc4c8c5a035fcdc320c7bc6cfb75ef7c5a034153df1413fa1d92f13
+
+  - name: libchromaprint
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_INSTALL_LIBDIR=/app/lib
+      - -DBUILD_SHARED_LIBS=ON
+    sources:
+      - type: git
+        url: https://github.com/acoustid/chromaprint
+        commit: 655c26f0db4d54014c367e3e714a62e3714792ce # v1.6.0
+
   - name: easytag
     config-opts:
       - --disable-Werror
     sources:
-      - type: archive
-        url: https://download.gnome.org/sources/easytag/2.4/easytag-2.4.3.tar.xz
-        sha512: ef596341772ce7da3b7feec2c82a20ca29d25c2496074c469be5b8dd75d2b2718e689310e0d61de53bc29a4f54ce9f853a336e1a35076046fd107afd28699087
-      - type: patch
-        path: appdata.patch
-      - type: patch
-        path: easytag-fix-ogg-corruption-prereq1.patch
-      - type: patch
-        path: easytag-fix-ogg-corruption-prereq2.patch
-      - type: patch
-        path: easytag-fix-ogg-corruption.patch
+      - type: git
+        url: https://github.com/maazl/easytag.git
