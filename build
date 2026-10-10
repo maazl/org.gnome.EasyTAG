@@ -1,2 +1,2 @@
-flatpak-builder --force-clean --user --install-deps-from=flathub --repo=easytag builddir org.gnome.EasyTAG.yaml 
-flatpak build-bundle easytag easytag.flatpak org.gnome.EasyTAG --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+flatpak-builder --force-clean --user --install-deps-from=flathub --repo=easytag builddir org.gnome.EasyTAG.yaml
+flatpak build-bundle easytag org.gnome.EasyTAG.flatpak org.gnome.EasyTAG --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
